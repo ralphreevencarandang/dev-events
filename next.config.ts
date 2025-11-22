@@ -4,6 +4,8 @@ const nextConfig: NextConfig = {
   /* config options here */
 
   // To load cloudinary images
+  cacheComponents: true,
+  // So images component can load the cloudinary <Images>
   images:{
     remotePatterns: [
       {

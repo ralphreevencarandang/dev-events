@@ -4,6 +4,8 @@ import Image from 'next/image';
 import BookEvent from '@/components/BookEvent';
 import { getSimilarEvents } from '@/lib/actions/event.actions';
 import EventCard from '@/components/EventCard';
+import { cacheLife, cacheTag } from 'next/cache'
+
 
 const EventDetailItem = ({icon, alt, label} : {icon: string, alt:string, label:string})=>(
     <div className='flex-row-gap-2 items-center'>
@@ -38,6 +40,8 @@ const EventTags = ({tags} : {tags: string[]})=>(
 
 const EventDetailsPage = async ({params} : {params : Promise <{slug:string}>}) => {
 
+     "use cache";
+  cacheLife('hours')
     const {slug} = await params;
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/events/${slug}`);
@@ -84,12 +88,7 @@ const EventDetailsPage = async ({params} : {params : Promise <{slug:string}>}) =
 
                 <EventTags tags={JSON.parse(event.tags[0])}/>
 
-                <div>
-                    {similarEvents && similarEvents.map((item)=> (
-                        <EventCard event={item} key={item.slug}/>
-            
-                    ))}
-                </div>
+               
 
 
 
@@ -109,11 +108,22 @@ const EventDetailsPage = async ({params} : {params : Promise <{slug:string}>}) =
                         ) : (
                             <p className='text-sm'>Be the first to book yout spot!</p>
                         )}
-                        <BookEvent/>
+                        <BookEvent eventId={event._id} slug={slug}/>
                     </div>
                    
             </aside>
         </div>
+
+         <div className='flex w-full flex-col gap-4 pt-20'>
+            <h2>Similar Events</h2>
+            <div className="events">
+
+                    {similarEvents.length > 0 && similarEvents.map((item)=> (
+                        <EventCard event={item} key={item.slug}/>
+            
+                    ))}
+                </div>
+            </div>
 
     </section>
   )
