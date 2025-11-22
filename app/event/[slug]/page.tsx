@@ -2,7 +2,8 @@ import { notFound } from 'next/navigation';
 import React from 'react'
 import Image from 'next/image';
 import BookEvent from '@/components/BookEvent';
-
+import { getSimilarEvents } from '@/lib/actions/event.actions';
+import EventCard from '@/components/EventCard';
 
 const EventDetailItem = ({icon, alt, label} : {icon: string, alt:string, label:string})=>(
     <div className='flex-row-gap-2 items-center'>
@@ -44,6 +45,8 @@ const EventDetailsPage = async ({params} : {params : Promise <{slug:string}>}) =
 
     if(!event)return notFound();
 
+
+    const similarEvents =  await getSimilarEvents(slug);
     const booking = 10;
 
   return (
@@ -80,6 +83,13 @@ const EventDetailsPage = async ({params} : {params : Promise <{slug:string}>}) =
                 </section>
 
                 <EventTags tags={JSON.parse(event.tags[0])}/>
+
+                <div>
+                    {similarEvents && similarEvents.map((item)=> (
+                        <EventCard event={item} key={item.slug}/>
+            
+                    ))}
+                </div>
 
 
 
